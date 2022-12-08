@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -13,10 +14,16 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+const (
+	fmt_error_bad_id            = "id is not integer: %v"
+	fmt_error_company_not_found = "company with id %v not found"
+)
+
 func GetCompany(response http.ResponseWriter, request *http.Request) {
-	id, err := strconv.Atoi(chi.URLParam(request, "id"))
+	idStr := chi.URLParam(request, "id")
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		util.ResponseBadRequest(response, "")
+		util.ResponseBadRequest(response, fmt.Sprintf(fmt_error_bad_id, idStr))
 		return
 	}
 
@@ -28,7 +35,7 @@ func GetCompany(response http.ResponseWriter, request *http.Request) {
 	}
 
 	if company == nil {
-		util.ResponseNotFound(response, "")
+		util.ResponseNotFound(response, fmt.Sprintf(fmt_error_company_not_found, id))
 		return
 	}
 

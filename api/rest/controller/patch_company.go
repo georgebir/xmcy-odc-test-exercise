@@ -19,7 +19,7 @@ func PatchCompany(response http.ResponseWriter, request *http.Request) {
 
 	err := repository.Repo.UpdateCompany(company)
 	if err != nil {
-		log.Println(constant.FMT_ERROR, err, string(debug.Stack()))
+		log.Printf(constant.FMT_ERROR, err, string(debug.Stack()))
 		util.ResponseInternalServerError(response)
 		return
 	}

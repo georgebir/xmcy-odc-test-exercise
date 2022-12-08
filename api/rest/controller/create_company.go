@@ -17,12 +17,12 @@ import (
 func CreateCompany(response http.ResponseWriter, request *http.Request) {
 	company, err := repository.Repo.CreateCompany(request.Context().Value(constant.CTX_COMPANY).(*dto.Company))
 	if err != nil {
-		log.Println(constant.FMT_ERROR, err, string(debug.Stack()))
+		log.Printf(constant.FMT_ERROR, err, string(debug.Stack()))
 		util.ResponseInternalServerError(response)
 	}
 
 	user := request.Context().Value(constant.CTX_USER).(*dto.User)
-	if err = mb.Kafka.Produce(viper.GetString(constant.KAFKA_TOPIC_ADD_EVENT), &dto.Event{Method: http.MethodDelete, UserEmail: user.Email, CompanyName: company.Name}); err != nil {
+	if err = mb.Kafka.Produce(viper.GetString(constant.KAFKA_TOPIC_ADD_EVENT), &dto.Event{Method: http.MethodPost, UserEmail: user.Email, CompanyName: company.Name}); err != nil {
 		log.Printf(constant.FMT_ERROR, err, string(debug.Stack()))
 	}
 

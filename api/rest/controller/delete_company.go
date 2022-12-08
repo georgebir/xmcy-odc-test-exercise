@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -29,7 +30,7 @@ func DeleteCompany(response http.ResponseWriter, request *http.Request) {
 		util.ResponseInternalServerError(response)
 		return
 	} else if company == nil {
-		util.ResponseNotFound(response, "")
+		util.ResponseNotFound(response, fmt.Sprintf(fmt_error_company_not_found, id))
 		return
 	}
 

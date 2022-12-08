@@ -37,7 +37,7 @@ func ValidateCompany(f http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(request.Context(), constant.CTX_COMPANY, company)
+		ctx := context.WithValue(request.Context(), constant.CTX_COMPANY, &company)
 		f.ServeHTTP(response, request.WithContext(ctx))
 	}) //handlerFunc
 }
