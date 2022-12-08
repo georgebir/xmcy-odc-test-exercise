@@ -1,0 +1,13 @@
+postgres:
+  host: 127.0.0.1
+  port: 5432
+  db: test_exercise_db
+  user: postgres
+  password: secret
+
+kafka:
+  address: host.docker.internal:9092
+  max_handlers: 10
+  group: company-group
+  topic:
+    add_event: add_event
