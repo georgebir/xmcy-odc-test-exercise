@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"test-exercise/api/constant"
-	"test-exercise/api/mb/handlers"
+	"test-exercise/api/messagebroker/handlers"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/spf13/viper"
@@ -23,13 +23,6 @@ const (
 	fmt_warning_ignored_event = "Kafka produce to topic %v - Ignored event: %s"
 	fmt_error_listen          = "kafka error in listening topic: %v error: %v\n%v"
 )
-
-var Kafka KafkaService
-
-type KafkaService interface {
-	Produce(topic string, value interface{}) error
-	ListenAndServe(topic, group string, handler handlers.Handler)
-}
 
 type kafkaService struct {
 	address    string

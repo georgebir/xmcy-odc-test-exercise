@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"test-exercise/api/dto"
-	"test-exercise/api/mb"
-	mb_mock "test-exercise/api/mb/mock"
+	"test-exercise/api/messagebroker"
+	mb_mock "test-exercise/api/messagebroker/mock"
 	"test-exercise/api/repository"
 	repository_mock "test-exercise/api/repository/mock"
 	"test-exercise/api/rest/middleware"
@@ -21,14 +21,14 @@ import (
 
 func TestDeleteCompany_HappyPath(t *testing.T) {
 	repoMock := &repository_mock.Repository{}
-	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email", Name: "name"}, nil).Once()
+	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email"}, nil).Once()
 	repoMock.On("GetCompany", 1).Return(&dto.Company{}, nil).Once()
 	repoMock.On("DeleteCompany", 1).Return(nil).Once()
 	repository.Repo = repoMock
 
-	kafkaMock := &mb_mock.KafkaService{}
+	kafkaMock := &mb_mock.MessageBroker{}
 	kafkaMock.On("Produce", mock.Anything, mock.Anything).Return(nil).Once()
-	mb.Kafka = kafkaMock
+	messagebroker.MBroker = kafkaMock
 
 	request, err := http.NewRequest(http.MethodDelete, "/companies/1", nil)
 	assert.Nil(t, err)
@@ -50,7 +50,7 @@ func TestDeleteCompany_HappyPath(t *testing.T) {
 
 func TestDeleteCompany_IfDeleteError(t *testing.T) {
 	repoMock := &repository_mock.Repository{}
-	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email", Name: "name"}, nil).Once()
+	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email"}, nil).Once()
 	repoMock.On("GetCompany", 1).Return(&dto.Company{}, nil).Once()
 	repoMock.On("DeleteCompany", 1).Return(errors.New("error")).Once()
 	repository.Repo = repoMock
@@ -74,7 +74,7 @@ func TestDeleteCompany_IfDeleteError(t *testing.T) {
 
 func TestDeleteCompany_IfCompanyNotFound_ReturnsError(t *testing.T) {
 	repoMock := &repository_mock.Repository{}
-	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email", Name: "name"}, nil).Once()
+	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email"}, nil).Once()
 	repoMock.On("GetCompany", 1).Return(nil, nil).Once()
 	repository.Repo = repoMock
 
@@ -99,7 +99,7 @@ func TestDeleteCompany_IfCompanyNotFound_ReturnsError(t *testing.T) {
 
 func TestDeleteCompany_IfGetCompanyError_ReturnsError(t *testing.T) {
 	repoMock := &repository_mock.Repository{}
-	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email", Name: "name"}, nil).Once()
+	repoMock.On("GetUser", "1234").Return(&dto.User{Id: 1, Email: "email"}, nil).Once()
 	repoMock.On("GetCompany", 1).Return(nil, errors.New("error")).Once()
 	repository.Repo = repoMock
 

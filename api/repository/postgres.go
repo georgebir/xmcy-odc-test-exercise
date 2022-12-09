@@ -49,7 +49,7 @@ func NewPostgresRepository() (*postgresRepository, error) {
 	pgRepo := &postgresRepository{
 		db: db,
 	}
-	if pgRepo.getUserStmt, err = db.Prepare("select id, email, name from users where token = $1"); err != nil {
+	if pgRepo.getUserStmt, err = db.Prepare("select id, email from users where token = $1"); err != nil {
 		db.Close()
 		return nil, fmt.Errorf(constant.FMT_ERROR, err, string(debug.Stack()))
 	}
@@ -89,12 +89,12 @@ func (r *postgresRepository) GetUser(token string) (*dto.User, error) {
 	}
 
 	var id int
-	var email, name string
-	if err = rows.Scan(&id, &email, &name); err != nil {
+	var email string
+	if err = rows.Scan(&id, &email); err != nil {
 		return nil, err
 	}
 
-	return &dto.User{Id: id, Email: email, Name: name}, nil
+	return &dto.User{Id: id, Email: email}, nil
 }
 
 func (r *postgresRepository) GetCompany(id int) (*dto.Company, error) {

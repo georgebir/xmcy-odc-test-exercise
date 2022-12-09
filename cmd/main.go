@@ -2,8 +2,9 @@ package main
 
 import (
 	"test-exercise/api/constant"
-	"test-exercise/api/mb"
-	mb_handlers "test-exercise/api/mb/handlers"
+	"test-exercise/api/messagebroker"
+	mb_kafka "test-exercise/api/messagebroker/kafka"
+	mb_handlers "test-exercise/api/messagebroker/kafka/handlers"
 	"test-exercise/api/repository"
 	"test-exercise/api/rest"
 
@@ -18,15 +19,15 @@ func main() {
 		panic(err)
 	}
 
-	mb.Kafka, err = mb.NewKafkaService()
+	messagebroker.MBroker, err = mb_kafka.NewKafkaService()
 	if err != nil {
 		panic(err)
 	}
-	go mb.Kafka.ListenAndServe(viper.GetString(constant.KAFKA_TOPIC_ADD_EVENT), viper.GetString(constant.KAFKA_GROUP), mb_handlers.AddEvent)
+	go messagebroker.MBroker.ListenAndServe(viper.GetString(constant.KAFKA_TOPIC_ADD_EVENT), viper.GetString(constant.KAFKA_GROUP), mb_handlers.AddEvent)
 
 	if repository.Repo, err = repository.NewPostgresRepository(); err != nil {
 		panic(err)
 	}
 
-	rest.ListenAndServe(5010)
+	rest.ListenAndServe(viper.GetInt("port"))
 }

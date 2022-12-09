@@ -1,14 +1,15 @@
 drop database if exists test_exercise_db;
 
+create database test_exercise_db;
 \connect test_exercise_db
 
 create table users(
-d serial primary key,
+id serial primary key,
 email varchar not null unique,
-name varchar not null,
-password varchar not null,
 token varchar
 );
+
+insert into users(email, token) values('e@mail.com', '1234567890');
 
 create table companies(
 id serial primary key,

@@ -7,7 +7,7 @@ import (
 
 	"test-exercise/api/constant"
 	"test-exercise/api/dto"
-	"test-exercise/api/mb"
+	"test-exercise/api/messagebroker"
 	"test-exercise/api/repository"
 	"test-exercise/api/rest/util"
 
@@ -22,7 +22,7 @@ func CreateCompany(response http.ResponseWriter, request *http.Request) {
 	}
 
 	user := request.Context().Value(constant.CTX_USER).(*dto.User)
-	if err = mb.Kafka.Produce(viper.GetString(constant.KAFKA_TOPIC_ADD_EVENT), &dto.Event{Method: http.MethodPost, UserEmail: user.Email, CompanyName: company.Name}); err != nil {
+	if err = messagebroker.MBroker.Produce(viper.GetString(constant.KAFKA_TOPIC_ADD_EVENT), &dto.Event{Method: http.MethodPost, UserEmail: user.Email, CompanyName: company.Name}); err != nil {
 		log.Printf(constant.FMT_ERROR, err, string(debug.Stack()))
 	}
 

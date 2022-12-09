@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - '5432:5432'
+    volumes: 
+      - ./db.sql
+  api:
+    build: ./
+    ports:
+      - 1234:1234
+    depends_on:
+      - kafka
+      - zookeeper
+      - db
+
+volumes:
+  db:
+    driver: local
